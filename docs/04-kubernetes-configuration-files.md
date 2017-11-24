@@ -97,3 +97,6 @@ EOF
 
 scp encryption-config.yaml加密文件到每个控制节点SvrXJK8sMaster01，SvrXJK8sMaster02，SvrXJK8sMaster03
 
+
+
+下一步：[配置和启动etcd集群](05-etcd.md)

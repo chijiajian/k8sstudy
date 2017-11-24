@@ -1,16 +1,23 @@
-配置和启动etcd集群
+# 配置和启动etcd集群 #
 
 etcd部署在SvrXJK8sMaster01，SvrXJK8sMaster02，SvrXJK8sMaster03上，也可以拿3台主机独立部署
-curl -OL "https://github.com/coreos/etcd/releases/download/v3.2.8/etcd-v3.2.8-linux-amd64.tar.gz"
 
-tar -xvf etcd-v3.2.8-linux-amd64.tar.gz
-cp etcd-v3.2.8-linux-amd64/etcd* /usr/local/bin/
+## 下载安装 ##
 
-etcd配置
-mkdir -p /etc/etcd /var/lib/etcd
-cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
+    curl -OL "https://github.com/coreos/etcd/releases/download/v3.2.8/etcd-v3.2.8-linux-amd64.tar.gz"
+    
+    tar -xvf etcd-v3.2.8-linux-amd64.tar.gz
+    cp etcd-v3.2.8-linux-amd64/etcd* /usr/local/bin/
 
-创建etcd.service
+## etcd配置 ##
+
+    mkdir -p /etc/etcd /var/lib/etcd
+    cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
+
+## 创建etcd.service ##
+
+<pre>
+<code>
 
 [Unit]
 Description=etcd
@@ -40,25 +47,29 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+</pre>
+</code>
 
- 依次生成SvrXJK8sMaster02,SvrXJK8sMaster03 的etcd.service
 
-cp etcd.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable etcd
-systemctl start etcd
+依次生成SvrXJK8sMaster02,SvrXJK8sMaster03 的etcd.service
 
-检查
-ETCDCTL_API=3 etcdctl member list
+    cp etcd.service /etc/systemd/system/
+    systemctl daemon-reload
+    systemctl enable etcd
+    systemctl start etcd
 
-[root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem member list
-a9b850345993890: name=SvrXJK8sMaster02 peerURLs=https://10.66.0.68:2380 clientURLs=https://10.66.0.68:2379 isLeader=false
-bf8c6a606a699629: name=SvrXJK8sMaster01 peerURLs=https://10.66.0.67:2380 clientURLs=https://10.66.0.67:2379 isLeader=false
-c23f3e1a72e36f0c: name=SvrXJK8sMaster03 peerURLs=https://10.66.0.69:2380 clientURLs=https://10.66.0.69:2379 isLeader=true
-
-[root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem cluster-health
-member a9b850345993890 is healthy: got healthy result from https://10.66.0.68:2379
-member bf8c6a606a699629 is healthy: got healthy result from https://10.66.0.67:2379
-member c23f3e1a72e36f0c is healthy: got healthy result from https://10.66.0.69:2379
-cluster is healthy
+## 检查 ##
+    
+    ETCDCTL_API=3 etcdctl member list
+    
+    [root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem member list
+    a9b850345993890: name=SvrXJK8sMaster02 peerURLs=https://10.66.0.68:2380 clientURLs=https://10.66.0.68:2379 isLeader=false
+    bf8c6a606a699629: name=SvrXJK8sMaster01 peerURLs=https://10.66.0.67:2380 clientURLs=https://10.66.0.67:2379 isLeader=false
+    c23f3e1a72e36f0c: name=SvrXJK8sMaster03 peerURLs=https://10.66.0.69:2380 clientURLs=https://10.66.0.69:2379 isLeader=true
+    
+    [root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem cluster-health
+    member a9b850345993890 is healthy: got healthy result from https://10.66.0.68:2379
+    member bf8c6a606a699629 is healthy: got healthy result from https://10.66.0.67:2379
+    member c23f3e1a72e36f0c is healthy: got healthy result from https://10.66.0.69:2379
+    cluster is healthy
 

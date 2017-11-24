@@ -271,3 +271,7 @@ scp ca.pem svrxjk8sworker01.pem svrxjk8sworker01-key.pem 到 svrxjk8sworker01 �
 依次分发对应证书到svrxjk8sworker02，svrxjk8sworker03节点
 
 scp  ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem 到SvrXJK8sMaster01,SvrXJK8sMaster02,SvrXJK8sMaster03控制节点
+
+
+
+下一步：[生成kubernetes 配置文件](04-kubernetes-configuration-files.md)

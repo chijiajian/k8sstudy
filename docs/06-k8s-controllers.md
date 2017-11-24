@@ -1,21 +1,25 @@
 # 配置和启动k8s 控制节点 #
 
-## 控制节点需要kube-apiserver,kube-controller-manager,kube-scheduler ##
+ 控制节点需要kube-apiserver,kube-controller-manager,kube-scheduler 
 
-curl -x $http_proxy -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -x $http_proxy -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/$controlplane
+## 下载和安装 ##
 
-其中$controlplane 为kube-apiserver，kube-controller-manager，kube-scheduler
+    curl -x $http_proxy -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -x $http_proxy -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/$controlplane
+    
+    其中$controlplane 为kube-apiserver，kube-controller-manager，kube-scheduler
+    
+    chmod +x kube-apiserver kube-controller-manager kube-scheduler
+    
+    cp  kube-apiserver kube-controller-manager kube-scheduler  /usr/local/bin/
 
-chmod +x kube-apiserver kube-controller-manager kube-scheduler
+## 配置kubernetes API Server ##
 
-cp  kube-apiserver kube-controller-manager kube-scheduler  /usr/local/bin/
+    mkdir -p /var/lib/kubernetes/
+    cp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem encryption-config.yaml /var/lib/kubernetes/
 
-配置kubernetes API Server
-
-mkdir -p /var/lib/kubernetes/
-cp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem encryption-config.yaml /var/lib/kubernetes/
-
-kube-apiserver.service 
+<pre>
+<code>
+cat kube-apiserver.service 
 
 [Unit]
 Description=Kubernetes API Server
@@ -59,10 +63,15 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+</pre>
+</code>
+
 
 
 ## 配置 Kubernetes Controller Manager ##
-kube-controller-manager.service
+<pre>
+<code>
+cat kube-controller-manager.service
 
 [Unit]
 Description=Kubernetes Controller Manager
@@ -87,9 +96,14 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+</pre>
+</code>
 
-配置 Kubernetes Scheduler
-kube-scheduler.service
+
+## 配置 Kubernetes Scheduler ##
+<pre>
+<code>
+cat kube-scheduler.service
 
 [Unit]
 Description=Kubernetes Scheduler
@@ -105,25 +119,34 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+</pre>
+</code>
 
 
-cp kube-apiserver.service kube-scheduler.service kube-controller-manager.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable kube-apiserver kube-controller-manager kube-scheduler
-systemctl start kube-apiserver kube-controller-manager kube-scheduler
+    cp kube-apiserver.service kube-scheduler.service kube-controller-manager.service /etc/systemd/system/
+    systemctl daemon-reload
+    systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+    systemctl start kube-apiserver kube-controller-manager kube-scheduler
 
 ## 验证 ##
+
+<pre>
+<code>
 [root@SvrXJK8sMaster01 config]# kubectl get componentstatuses
-NAME                 STATUS    MESSAGE              ERROR
-controller-manager   Healthy   ok                   
-scheduler            Healthy   ok                   
-etcd-0               Healthy   {"health": "true"}   
-etcd-2               Healthy   {"health": "true"}   
-etcd-1               Healthy   {"health": "true"} 
+NAME STATUSMESSAGE  ERROR
+controller-manager   Healthy   ok   
+schedulerHealthy   ok   
+etcd-0   Healthy   {"health": "true"}   
+etcd-2   Healthy   {"health": "true"}   
+etcd-1   Healthy   {"health": "true"} 
+</pre>
+</code>
 
-kubelet RBAC授权
+## kubelet RBAC授权 ##
 
-cat <<EOF | kubectl apply -f -
+<pre>
+<code>
+cat &gt;&gt;EOF | kubectl apply -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
@@ -144,8 +167,12 @@ rules:
     verbs:
       - "*"
 EOF
+</pre>
+</code>
 
-cat <<EOF | kubectl apply -f -
+<pre>
+<code>
+cat &gt;&gt;EOF | kubectl apply -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -160,8 +187,13 @@ subjects:
     kind: User
     name: kubernetes
 EOF
+</pre>
+</code>
 
-10.66.0.75 haproxy配置
+
+## 10.66.0.75 haproxy配置 ##
+<pre>
+<code>
 frontend  k8sapi *:6443
     mode        tcp
     default_backend             k8s
@@ -172,9 +204,12 @@ backend k8s
     server  xjk8smaster01 10.66.0.67:6443 check
     server  xjk8smaster02 10.66.0.68:6443 check
     server  xjk8smaster03 10.66.0.69:6443 check
-
+</pre>
+</code>
 
 ## 验证 ##
+<pre>
+<code>
 curl --cacert ca.pem https://10.66.0.75:6443/version
 
 [root@SvrXJK8sMaster01 config]# curl --cacert ca.pem https://10.66.0.75:6443/version
@@ -188,6 +223,7 @@ curl --cacert ca.pem https://10.66.0.75:6443/version
   "goVersion": "go1.8.3",
   "compiler": "gc",
   "platform": "linux/amd64"
-
-
+}
+</pre>
+</code>
 
