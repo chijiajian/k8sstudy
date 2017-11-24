@@ -11,7 +11,7 @@
 
 ## 实验 ##
 
-- [环境准备](blob/master/docs/01-prerequisites.dm)
+- [环境准备](blob/master/docs/01-prerequisites.md)
 - [客户端工具安装](blob/master/docs/02-clinet-tools.md)
 - [CA和TLS证书](blob/master/docs/03-certificate.md)
 - [生成kubernetes 认证配置文件和数据加密配置和密钥](blob/master/docs/04-kubernetes-configuration-files.md)
