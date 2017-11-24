@@ -11,14 +11,14 @@
 
 ## 实验 ##
 
-- [环境准备](docs/01-prerequisites.dm)
-- [客户端工具安装](docs/02-clinet-tools.md)
-- [CA和TLS证书](docs/03-certificate.md)
-- [生成kubernetes 认证配置文件和数据加密配置和密钥](docs/04-kubernetes-configuration-files.md)
-- [配置和启动 etcd集群](docs/05-etcd.md)
-- [配置和启动kubernetes control组件](docs/06-k8s-controllers.md)
-- [配置flannel插件](docs/07-flannel.md)
-- [配置和启动kubernetes worker节点](docs/08-k8s-workers.md)
+- [环境准备](blob/master/docs/01-prerequisites.dm)
+- [客户端工具安装](blob/master/docs/02-clinet-tools.md)
+- [CA和TLS证书](blob/master/docs/03-certificate.md)
+- [生成kubernetes 认证配置文件和数据加密配置和密钥](blob/master/docs/04-kubernetes-configuration-files.md)
+- [配置和启动 etcd集群](blob/master/docs/05-etcd.md)
+- [配置和启动kubernetes control组件](blob/master/docs/06-k8s-controllers.md)
+- [配置flannel插件](blob/master/docs/07-flannel.md)
+- [配置和启动kubernetes worker节点](blob/master/docs/08-k8s-workers.md)
 - 配置kuberctl
 
 
