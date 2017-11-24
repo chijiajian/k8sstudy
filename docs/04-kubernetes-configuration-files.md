@@ -1,8 +1,10 @@
 # 生成kubernetes 配置文件 #
 
-# kubelet kubernetes 配置文件 #
+## kubelet kubernetes 配置文件 ##
+<pre>
+<code>
+cat kubeconfigconfig.sh
 
-kubeconfigconfig.sh
 for instance in svrxjk8sworker01 svrxjk8sworker02 svrxjk8sworker03; do
   kubectl config set-cluster kubernetes-easthope \
     --certificate-authority=ca.pem \
@@ -24,15 +26,24 @@ for instance in svrxjk8sworker01 svrxjk8sworker02 svrxjk8sworker03; do
   kubectl config use-context default --kubeconfig=${instance}.kubeconfig
 done
 
- 执行kubeconfigconfig.sh脚本获得
+
+</pre>
+</code>
+
+
+
+> 执行kubeconfigconfig.sh脚本获得
 
 svrxjk8sworker01.kubeconfig
+
 svrxjk8sworker02.kubeconfig
+
 svrxjk8sworker03.kubeconfig
 
-kube-proxy kubernetes 配置文件
+## kube-proxy kubernetes 配置文件 ##
 
-
+<pre>
+<code>
 kubectl config set-cluster kubernetes-easthope \
   --certificate-authority=ca.pem \
   --embed-certs=true \
@@ -48,20 +59,27 @@ kubectl config set-context default \
   --user=kube-proxy \
   --kubeconfig=kube-proxy.kubeconfig
 kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+</pre>
+</code>
 
-分发kubernetes配置文件
+## 分发kubernetes配置文件 ##
 
 scp svrxjk8sworker01.kubeconfig kube-proxy.kubeconfig 到svrxjk8sworker01上
+
 依次分发对应文件到svrxjk8sworker02，svrxjk8sworker03
 
-生成数据加密配置文件和密钥
+## 生成数据加密配置文件和密钥 ##
 
-加密秘要
-ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
+加密密钥:
 
-加密配置文件
+    ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
+
+加密配置文件: 
 encryption-config.yaml
-cat > encryption-config.yaml <<EOF
+
+<pre>
+<code>
+cat &gt; encryption-config.yaml &lt;&lt;EOF
 kind: EncryptionConfig
 apiVersion: v1
 resources:
@@ -74,6 +92,8 @@ resources:
               secret: ${ENCRYPTION_KEY}
       - identity: {}
 EOF
+</pre>
+</code>
 
 scp encryption-config.yaml加密文件到每个控制节点SvrXJK8sMaster01，SvrXJK8sMaster02，SvrXJK8sMaster03
 

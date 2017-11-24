@@ -27,4 +27,6 @@ DNS_SERVICE_IP=192.168.0.10 此地址必须为SERVICE_IP_RANGE的地址范围
 在xx云服务商的开启shadowsocket服务
 在PC上下一个客户端，并提供代理服务。本文使用的代理地址为http://10.0.193.33:1080
 
+[下一步：客户端工具安装](02-clinet-tools.md)
+
 
