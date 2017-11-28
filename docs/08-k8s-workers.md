@@ -1,8 +1,10 @@
 # 配置和启动kubernetes Worker 节点 #
+启用3个kubernetes worker节点， 需要安装kubelet和kube-proxy
 
-worker节点需要安装和配置kubelet和kube-proxy
+## worker节点需要安装和配置kubelet和kube-proxy ##
 
-
+<pre>
+<code>
 curl -x $http_proxy -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -x $http_proxy -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/$workers
 其中workers为kube-proxy和kubelet
 
@@ -25,13 +27,18 @@ cp  kube-proxy kubelet /usr/local/bin/
     "isDefaultGateway": true
   }
 }
+</pre>
+</code>
 
 ## 配置kubelet ##
-cp ${HOSTNAME}-key.pem ${HOSTNAME}.pem /var/lib/kubelet/
-cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
-cp ca.pem /var/lib/kubernetes/
 
-创建kubelet.service服务
+    cp ${HOSTNAME}-key.pem ${HOSTNAME}.pem /var/lib/kubelet/
+    cp ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
+    cp ca.pem /var/lib/kubernetes/
+
+创建kubelet.service服务:
+<pre>
+<code>
 [Unit]
 Description=Kubernetes Kubelet
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -61,12 +68,15 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+</pre>
+</code>
 
-默认的hostname为worker机器名，DNS服务器要能解析。也可以用  --hostname-override=worker.domain.com  域名或IP的格式，如果修改相关证书都要有对应
+> 默认的hostname为worker机器名，DNS服务器要能解析。也可以用  --hostname-override=worker.domain.com  域名或IP的格式，如果修改相关证书都要有对应
 
-## 配置kubernetes proxy
- ##
+## 配置kubernetes proxy##
 
+<pre>
+<code>
 cp kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
 
 cat /etc/systemd/system/kube-proxy.service 
@@ -90,14 +100,22 @@ cp kubelet.service kube-proxy.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable  kubelet kube-proxy
 systemctl status  kubelet kube-proxy
+</pre>
+</code>
 
-检查
+## 检查 ##
+<pre>
+<code>
 [root@SvrXJK8sMaster01 config]# kubectl get nodes
 NAME               STATUS    ROLES     AGE       VERSION
 10.66.0.71         Ready     <none>    1d        v1.8.0   #这个节点就是用--hostname-override修改过的
 svrxjk8sworker02   Ready     <none>    2d        v1.8.0
 svrxjk8sworker03   Ready     <none>    2d        v1.8.0
+</pre>
+</code>
 
+
+下一步：[配置kubectl进行远程访问和管理](09-kubectl.md)
 
 
  
