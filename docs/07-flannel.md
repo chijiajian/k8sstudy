@@ -1,14 +1,16 @@
 # 部署flannel插件 #
 
 ## 下载 ##
-curl -OL https://github.com/coreos/flannel/releases/download/v0.9.1/flannel-v0.9.1-linux-amd64.tar.gz
-
-tar -xzvf flannel-v0.9.1-linux-amd64.tar.gz -C flannel
-cp flannel/flanenld /usr/local/bin/flanneld
+    curl -OL https://github.com/coreos/flannel/releases/download/v0.9.1/flannel-v0.9.1-linux-amd64.tar.gz
+    
+    tar -xzvf flannel-v0.9.1-linux-amd64.tar.gz -C flannel
+    cp flannel/flanenld /usr/local/bin/flanneld
 
 ## 创建flanneld.service ##
 
-Unit]
+<pre>
+<code>
+[Unit]
 Description=Flanneld overlay address etcd agent
 After=network.target
 After=network-online.target
@@ -30,25 +32,32 @@ Restart=on-failure
 WantedBy=multi-user.target
 RequiredBy=docker.service
 
+</pre>
+</code>
 
+## pod网段写入etcd ##
+<pre>
+<code>
+etcdctl --cert-file=kubernetes.pem \
+        --key-file=kubernetes-key.pem 
+        --ca-file=ca.pem \
+        set /coreos.com/network/config \
+        {"Network":"192.168.0.0/16", "Backend":{"Type":"vxlan"}}
+</pre>
+</code>
 
-pod网段写入etcd
-etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem set /coreos.com/network/config {"Network":"192.168.0.0/16", "Backend":{"Type":"vxlan"}}
-
-cp flanneld.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable flanneld
-systemctl start flanneld
+    cp flanneld.service /etc/systemd/system/
+    systemctl daemon-reload
+    systemctl enable flanneld
+    systemctl start flanneld
 
 ## 验证 ##
+<pre>
+<code>
 [root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem get /coreos.com/network/config
-
 {"Network":"192.168.0.0/16", "Backend":{"Type":"vxlan"}}
 
-
-
 [root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem ls /coreos.com/network/subnets
-
 /coreos.com/network/subnets/192.168.52.0-24
 /coreos.com/network/subnets/192.168.28.0-24
 /coreos.com/network/subnets/192.168.97.0-24
@@ -68,20 +77,31 @@ systemctl start flanneld
        valid_lft forever preferred_lft forever
 
 各节点互ping flannel.1地址，要OK
+</pre>
+</code>
 
-安装docker-ce
-$ curl -fsSL get.docker.com -o get-docker.sh
-$ sudo sh get-docker.sh
+## 安装docker-ce ##
 
-docker配置
+    $ curl -fsSL get.docker.com -o get-docker.sh
+    $ sudo sh get-docker.sh
+
+docker配置: 
+
+<pre>
+<code>
 mkdir -p /etc/systemd/system/docker.service.d
 下载google相关镜像需要科学上网，配置http_proxy
-vi  /etc/systemd/system/docker.service.d/http-proxy.conf 
+cat  /etc/systemd/system/docker.service.d/http-proxy.conf 
 [Service]
 Environment="HTTP_PROXY=http://10.0.193.33:1080/"
+</pre>
+</code>
 
-创建使用flannel 的环境变量配置文件 
-vi /etc/systemd/system/docker.service.d/40-flannel.conf
+创建使用flannel 的环境变量配置文件:
+
+<pre>
+<code>
+cat /etc/systemd/system/docker.service.d/40-flannel.conf
 [Unit]
 Requires=flanneld.service
 After=flanneld.service
@@ -90,13 +110,20 @@ EnvironmentFile=/run/flannel/docker
 
 /run/flannel/docker为mk-docker-opts.sh生成的相关环境变量
 
+
+
 cat /run/flannel/docker
 DOCKER_OPT_BIP="--bip=192.168.52.1/24"
 DOCKER_OPT_IPMASQ="--ip-masq=true"
 DOCKER_OPT_MTU="--mtu=1450"
 DOCKER_NETWORK_OPTIONS=" --bip=192.168.52.1/24 --ip-masq=true --mtu=1450"
 
-修改启动docker参数的环境变量
+</pre>
+</code>
+
+修改启动docker参数的环境变量:
+<pre>
+<code>
 cat /usr/lib/systemd/system/docker.service
 [Unit]
 Description=Docker Application Container Engine
@@ -132,13 +159,16 @@ StartLimitInterval=60s
 
 [Install]
 WantedBy=multi-user.target
+</pre>
+</code>
 
+    systemctl daemon-reload
+    systemctl enable docker
+    systemctl start docker
 
-systemctl daemon-reload
-systemctl enable docker
-systemctl start docker
-
-检查docker服务和网络
+检查docker服务和网络:
+<pre>
+<code>
 docker version
 docker info
 ip a
@@ -156,6 +186,11 @@ ip a
        valid_lft forever preferred_lft forever
 
 docker0和flannel.1在同一个网段中，这两是桥接，其他节点能互ping 这两接口的地址
+</pre>
+</code>
+
+
+下一步：[配置和启动kubernetes Worker节点](08-k8s-workers.md)
 
 
 
