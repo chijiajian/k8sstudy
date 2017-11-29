@@ -65,3 +65,6 @@ subjects:
 </code>
 </pre> 
 
+
+下一步：[部署traefik ingress controller](12-traefik-ingress.md)
+

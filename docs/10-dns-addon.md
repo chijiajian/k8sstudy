@@ -4,7 +4,7 @@ kubernetes的服务发现有使用环境变量和DNS两种方式，本章节部�
 
 ## DNS Cluster插件脚本##
 
-kubectl create -f kube-dns.yaml
+kubectl create -f https://raw.githubusercontent.com/chijiajian/k8sstudy/master/deployments/kube-dns.yaml
 
 ## 验证： ##
 kubectl get pods --namespace=kube-system | grep kube-dns
