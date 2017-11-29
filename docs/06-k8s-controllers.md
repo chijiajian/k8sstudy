@@ -1,4 +1,7 @@
-# 配置和启动k8s 控制节点 #
+# 配置和启动kubernetes控制节点 #
+
+本实验配置3台kubernetes控制节点和配置高可用性。本文使用haproxy开放Kubernetes API Server对应端口6443作为负载均衡，各云供应商或IaaS私有云提供了LB，也可开放对应端口进行负载均衡。例如阿里云的ELB。
+
 
  控制节点需要kube-apiserver,kube-controller-manager,kube-scheduler 
 
@@ -142,7 +145,10 @@ etcd-1   Healthy   {"health": "true"}
 </pre>
 </code>
 
+> 三台Controller节点都进行验证
+
 ## kubelet RBAC授权 ##
+
 
 <pre>
 <code>
@@ -227,3 +233,5 @@ curl --cacert ca.pem https://10.66.0.75:6443/version
 </pre>
 </code>
 
+
+下一步：[部署flannel插件](07-flannel.md)
