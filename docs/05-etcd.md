@@ -1,5 +1,7 @@
 # 配置和启动etcd集群 #
 
+Kubernetes组件是无状态的，集群状态是保存在etcd中。本实验启用3个节点作为etcd集群，并通过安全远程访问加强安全。
+
 etcd部署在SvrXJK8sMaster01，SvrXJK8sMaster02，SvrXJK8sMaster03上，也可以拿3台主机独立部署
 
 ## 下载安装 ##
@@ -15,7 +17,7 @@ etcd部署在SvrXJK8sMaster01，SvrXJK8sMaster02，SvrXJK8sMaster03上，也可�
     cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 
 ## 创建etcd.service ##
-
+要确保etcd的名称是集群中唯一的，建议使用hostname作为各etcd节点名称。
 <pre>
 <code>
 
@@ -73,3 +75,6 @@ WantedBy=multi-user.target
     member c23f3e1a72e36f0c is healthy: got healthy result from https://10.66.0.69:2379
     cluster is healthy
 
+
+
+下一步：[配置和启动k8s 控制节点](06-k8s-controllers.md)

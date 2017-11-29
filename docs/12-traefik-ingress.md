@@ -27,9 +27,14 @@ kubectl get nodes --show-labels进行验证
 
  kubectl create -f https://raw.githubusercontent.com/containous/traefik/master/examples/k8s/ui.yaml
 
-> 根据实际情况修改
+> 根据实际情况修改rules
 
+<pre>
+<code>
   rules:
   - host: traefik.domain.local   #修改为DNS能解析到的DOMAIN就可以通过此domain进行UI访问了。
+ 
+</code>
+</pre> 
 
 下一步：[部署Heapster add-on](13-Heapster.md)
