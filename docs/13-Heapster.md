@@ -49,3 +49,5 @@ spec:
 
 </code>
 </pre> 
+
+下一步：[部署VMWare harbor私有仓库](14-harbor.md)
