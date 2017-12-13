@@ -129,4 +129,6 @@ The push refers to a repository [10.66.0.68/dev/pause-amd64]
 
     cat ~/.docker/config.json
 
+下一步: [RBAC授权](docs/15-rbac.md)
+
 

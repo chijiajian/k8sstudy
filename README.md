@@ -24,6 +24,8 @@
 - [部署kubernetes dashboard](docs/11-kubernetes-dashboard.md)
 - [部署traefik ingress controller](docs/12-traefik-ingress.md)
 - [部署Heapster插件](docs/13-Heapster.md)
+- [部署VMWare harbor私有仓库](docs/14-harbor.md)
+- [RBAC分配权限](docs/15-rbac.md)
 
 
 

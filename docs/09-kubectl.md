@@ -15,7 +15,7 @@ kubectl config set-credentials admin \
   --client-certificate=admin.pem \
   --client-key=admin-key.pem
 kubectl config set-context kubernetes-easthope \
-  --cluster=kubernetes-the-hard-way \
+  --cluster=kubernetes-easthope \
   --user=admin
 kubectl config use-context kubernetes-easthope
 
