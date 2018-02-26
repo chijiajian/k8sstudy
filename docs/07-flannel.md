@@ -55,7 +55,7 @@ etcdctl --cert-file=kubernetes.pem \
 <pre>
 <code>
 [root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem get /coreos.com/network/config
-{"Network":"192.168.0.0/16", "Backend":{"Type":"vxlan"}}
+'{"Network":"192.168.0.0/16", "Backend":{"Type":"vxlan"}}'
 
 [root@SvrXJK8sMaster01 config]# etcdctl --cert-file=kubernetes.pem --key-file=kubernetes-key.pem --ca-file=ca.pem ls /coreos.com/network/subnets
 /coreos.com/network/subnets/192.168.52.0-24
